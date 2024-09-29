@@ -1,0 +1,45 @@
+﻿@model MVC_ConnectionPost_ViewModel
+
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+
+
+<h1>Connection API Index Page</h1>
+
+<div>
+    <h2>Get Data From Api Project</h2>
+</div>
+
+
+<div>
+    <h2>Send From Post to Api Project</h2>
+    <form  asp-action="Create" method="post" >
+        @Html.AntiForgeryToken()
+        <div>
+            <label asp-for="Name"></label>
+            <input asp-for="Name" />
+            <span asp-validation-for="Name"></span>
+        </div>
+        <div>
+            <label asp-for="Age"></label>
+            <input asp-for="Age" type="number" />
+            <span asp-validation-for="Age"></span>
+        </div>
+        <div>
+            <label asp-for="DateTime"></label>
+            <input asp-for="DateTime" type="date" />
+            <span asp-validation-for="DateTime"></span>
+        </div>
+        <div>
+            <label asp-for="IsBool"></label>
+            <input asp-for="IsBool" type="checkbox" />
+            <span asp-validation-for="IsBool"></span>
+        </div>
+        <button type="submit">送出</button>
+    </form>
+
+</div>

@@ -1,0 +1,6 @@
+*.sln
+*.user
+*/bin
+*/obj
+*/wwwroot
+/.vs
