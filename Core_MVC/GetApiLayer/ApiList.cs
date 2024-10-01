@@ -127,5 +127,55 @@ namespace Core_MVC.GetApiLayer
                 return null;
             }
         }
+
+
+        public async Task<FileTransferViewModel?> GetFileStreamData()
+        {
+            try
+            {
+                SetAuthorizationHeader();
+
+                var response = await _httpClient.GetAsync(_apiUrl + "/api/Connection/SendFile");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadFromJsonAsync<FileTransferDto>();
+
+                    if (content == null)
+                    {
+                        return null;
+                    }
+                    string GetFileUrl = content.FileContent;
+
+                    var responseStream = await _httpClient.GetAsync(_apiUrl + content.FileUrl);
+                    if (responseStream.IsSuccessStatusCode)
+                    {
+                        var contentStream = await responseStream.Content.ReadAsStreamAsync();
+                        FileTransferViewModel fileTransferViewModel = new FileTransferViewModel();
+                        fileTransferViewModel.FileName = content.FileName;
+                        fileTransferViewModel.FileContent = content.FileContent;
+                        fileTransferViewModel.FileStream = contentStream;
+
+                        return fileTransferViewModel;
+                    }
+
+                    return null;
+
+
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                string exMessage = ex.Message;
+                return null;
+            }
+        }
+
+
+
     }
 }

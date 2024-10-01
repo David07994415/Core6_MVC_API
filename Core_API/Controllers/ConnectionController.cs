@@ -1,6 +1,7 @@
 ﻿using Core_Common2.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace Core_API.Controllers
 {
@@ -50,6 +51,69 @@ namespace Core_API.Controllers
 
             return Ok(connectionData); // 返回成功的響應
         }
+
+        [Authorize] // 驗證 Token
+        [HttpGet]
+        public async Task<IActionResult> SendFile()
+        {
+            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "table_example.pdf");
+
+            if (!System.IO.File.Exists(filePath))
+            {
+                return NotFound(); // 如果檔案不存在，返回 404
+            }
+
+            // 取得檔案類型
+            string contentType = "";
+            var provider = new FileExtensionContentTypeProvider();
+            if (!provider.TryGetContentType(filePath, out  contentType))
+            {
+                contentType = "application/octet-stream";  // 預設內容類型
+            }
+
+            var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+
+            FileTransferDto fileTransferDto = new FileTransferDto();
+            fileTransferDto.FileName = "table_example.pdf";
+            fileTransferDto.FileContent = contentType;
+            fileTransferDto.FileUrl = Url.Action("DownloadSend", new { fileName = Path.GetFileName(filePath) });      // 用於下載檔案的 URL
+
+            //return new FileStreamResult(stream, contentType)
+            //{
+            //    FileDownloadName = Path.GetFileName(filePath) // 可選，設置下載時的檔名
+            //};
+
+            return Ok(fileTransferDto);
+
+        }
+
+        // 另一個方法來處理下載
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> DownloadSend(string fileName)
+        {
+            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", fileName);
+
+            if (!System.IO.File.Exists(filePath))
+            {
+                return NotFound(); // 如果檔案不存在，返回 404
+            }
+
+            var provider = new FileExtensionContentTypeProvider();
+            if (!provider.TryGetContentType(filePath, out string contentType))
+            {
+                contentType = "application/octet-stream"; // 預設內容類型
+            }
+
+            var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+
+
+            return new FileStreamResult(stream, contentType)
+            {
+                FileDownloadName = Path.GetFileName(filePath) // 可選，設置下載時的檔名
+            };
+        }
+
 
     }
 }

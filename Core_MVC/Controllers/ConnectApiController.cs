@@ -21,8 +21,29 @@ namespace Core_MVC.Controllers
         public async Task<IActionResult> Index()
         {
             var data = await  _apiList.GetApiConnectionData();
+
             var i = 1;
             return View();
+        }
+
+
+        public async Task<IActionResult> DownloadFile()
+        {
+            var model = await _apiList.GetFileStreamData();
+
+            if (model == null)
+            {
+                return NotFound(); // 如果流為 null，返回 404
+            }
+
+            if (model.FileStream == null)
+            {
+                return NotFound(); // 如果流為 null，返回 404
+            }
+
+
+
+            return File(model.FileStream, model.FileContent, model.FileName);
         }
 
 
