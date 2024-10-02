@@ -1,0 +1,14 @@
+﻿@model Core_Common2.ViewModels.ConnectionApiViewModel
+
+
+
+<div>
+	<H3>這是 View Component 傳來的</H3>
+	<p>Model ID為：@Model.Id</p>
+	<p>Model Name為：@Model.name</p>
+	@if (ViewBag.TestPara != null)
+	{
+		<p>測試傳遞進來的參數：@ViewBag.TestPara</p>
+	}
+
+</div>
