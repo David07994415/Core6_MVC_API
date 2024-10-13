@@ -65,21 +65,23 @@ namespace Core_MVC
             var secretKey = builder.Configuration.GetValue<string>("JwtSettings:Key");
             var issuer = builder.Configuration.GetValue<string>("JwtSettings:Issuer");
             var audience = builder.Configuration.GetValue<string>("JwtSettings:Audience");
-            builder.Services.AddSingleton(new JwtHelper(secretKey, issuer, audience));
+            builder.Services.AddScoped<JwtHelper>(provider => {
+                return new JwtHelper(secretKey, issuer, audience);
+            });
 
 
             // 註冊 IHttpClientFactory
             builder.Services.AddHttpClient();
 
             // 建立 ApiList 的 DI 注入，並注入 JwtHelper、Http 實體
-            builder.Services.AddSingleton<ApiList>(provider =>
+            builder.Services.AddScoped<ApiList>(provider =>
             {
                 var jwtHelper = provider.GetRequiredService<JwtHelper>();
                 var httpClient = provider.GetRequiredService<IHttpClientFactory>().CreateClient();
                 var apiUrl = builder.Configuration.GetValue<string>("DataApiUrl");
                 var httpContextAccessor = provider.GetRequiredService<IHttpContextAccessor>();
 
-                return new ApiList(jwtHelper, httpClient, apiUrl,httpContextAccessor);
+				return new ApiList(jwtHelper, httpClient, apiUrl,httpContextAccessor);
             });
 
             // 建立 ApiList 的 DI 注入，並注入 JwtHelper 實體

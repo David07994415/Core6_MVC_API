@@ -19,17 +19,29 @@ namespace Core_MVC.GetApiLayer
             _apiUrl = apiUrl;
             _httpContextAccessor = httpContextAccessor;
 
-            // 登入前後會都會顯示 token 是 null
-            //var token = _httpContextAccessor.HttpContext.Session.GetString("JwtToken");
-            //if (!string.IsNullOrEmpty(token))
-            //{
-            //    _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            //}
+			//// 登入前後會都會顯示 token 是 null
+			//var token = _httpContextAccessor.HttpContext.Session.GetString("JwtToken");
+			//if (!string.IsNullOrEmpty(token))
+			//{
+			//    _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenFromSession);
+			//}
+			try
+			{
+				var tokenFromSession = _httpContextAccessor.HttpContext.Session.GetString("JwtToken");
+				if (!string.IsNullOrEmpty(tokenFromSession))
+				{
+					_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenFromSession);
+				}
+			}
+			catch
+			{
 
-         
-        }
+			}
 
-        private void SetAuthorizationHeader()
+
+		}
+
+		private void SetAuthorizationHeader()
         {
             try
             {
@@ -51,7 +63,7 @@ namespace Core_MVC.GetApiLayer
         {
             try
             {
-                SetAuthorizationHeader();
+                // SetAuthorizationHeader();
 
                 var response = await _httpClient.GetAsync(_apiUrl+ "/api/Connection/GetConObj");
 
@@ -113,7 +125,7 @@ namespace Core_MVC.GetApiLayer
                     var content = await response.Content.ReadAsStringAsync(); // Token
 
                     // 將 token 放入 Session 中
-                    _httpContextAccessor.HttpContext.Session.SetString("JwtToken", content);
+                    // _httpContextAccessor.HttpContext.Session.SetString("JwtToken", content);
                     return content;
                 }
                 else

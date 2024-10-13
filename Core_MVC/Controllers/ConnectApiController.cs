@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Core_MVC.Controllers
 {
-    [ServiceFilter(typeof(AuthFilter))]
+    // [ServiceFilter(typeof(AuthFilter))]
     public class ConnectApiController : Controller
     {
         private readonly ApiList _apiList;
@@ -26,8 +26,21 @@ namespace Core_MVC.Controllers
             return View();
         }
 
+        public IActionResult JsTry() 
+        {
+            return View();
+        }
 
-        public async Task<IActionResult> DownloadFile()
+        [HttpGet]
+        [ValidateAntiForgeryToken]
+		public IActionResult getJwtString()
+		{
+			var token = HttpContext.Session.GetString("JwtToken");
+			return Content(token); // 以純文本的方式返回 JWT
+		}
+
+
+		public async Task<IActionResult> DownloadFile()
         {
             var model = await _apiList.GetFileStreamData();
 

@@ -2,6 +2,7 @@
 using Core_MVC.GetApiLayer;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Core_MVC.Controllers
 {
@@ -30,11 +31,27 @@ namespace Core_MVC.Controllers
             {
                 // 呼叫 AP
                 var data = await _apiList.PostLoginApi(loginViewModel);
-                if (data != null) 
-                {
-                    // 驗證成功
-                    // 重新導向
-                    return RedirectToAction("Index", "ConnectApi");
+                if (data != null)    // 驗證成功
+				{
+					// 取得 Token ，並於 Session 中加入
+					HttpContext.Session.SetString("JwtToken", data);
+
+					// 解析 JWT 以獲取負載
+					var handler = new JwtSecurityTokenHandler();
+					var jwtToken = handler.ReadJwtToken(data);
+
+					// 獲取 userName，並將其存放到 Session 中
+					var userName = jwtToken.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
+					if (!string.IsNullOrEmpty(userName))
+					{
+						HttpContext.Session.SetString("UserName", userName);
+					}
+
+
+
+
+					// 重新導向
+					return RedirectToAction("Index", "ConnectApi");
                 }
             }
 

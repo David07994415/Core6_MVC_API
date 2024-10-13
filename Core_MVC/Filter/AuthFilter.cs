@@ -19,6 +19,7 @@ namespace Core_MVC.Filter
             {
                 // JWT 不存在，設置未授權結果
                 context.Result = new RedirectToActionResult("Index", "Home", null);
+                return;
             }
 
 
@@ -27,7 +28,8 @@ namespace Core_MVC.Filter
             {
                 // JWT 不存在，設置未授權結果
                 context.Result = new RedirectToActionResult("Index", "Home", null);
-            }
+				return;
+			}
 
 
            

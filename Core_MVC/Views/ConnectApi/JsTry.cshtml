@@ -1,0 +1,85 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@{
+	var tokenString = this.ViewContext.HttpContext.Session.GetString("JwtToken");
+}
+
+<p>@tokenString</p>
+@Html.AntiForgeryToken()
+
+<div id="JsContent">
+	<input type="hidden" id="antiforgeToken" value=""/>
+</div>
+
+@section Scripts {
+	<script scr="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.7.1.js"></script>
+	<script type="text/javascript">
+
+		console.log("This is a script from the Index page.");
+
+		$(document).ready(function () {
+			let jwtTokenString = '@this.ViewContext.HttpContext.Session.GetString("JwtToken")';
+			$.ajax({
+				url: 'https://localhost:7248/api/Connection/GetConObj', // 你的 API Controller 和 Action 名稱
+				type: 'GET',
+				headers: {
+					'Authorization': 'Bearer ' + jwtTokenString // 將 JWT 作為 Bearer Token 發送
+				},
+				success: function (data) {
+					console.log(data)
+					// $('#apiResult').text(JSON.stringify(data)); // 顯示 API 返回的數據
+				},
+				error: function (xhr, status, error) {
+					console.error("呼叫 API 時發生錯誤:", error);
+				}
+			});
+		});
+			
+			
+			
+				// console.log($('input[name="__RequestVerificationToken"]').val());
+				// 第一步：獲取 JWT
+				// $.ajax({
+				// url: '@Url.Action("getJwtString", "ConnectApi")', // 你的 Controller 和 Action 名稱
+				// 	type: 'GET',
+				// 	headers: {
+				// 	'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() // 使用隱藏輸入中的 CSRF 令牌
+				// 	},
+				// 	success: function (token) {
+				// 		console.log(token)
+				// 		// 第二步：使用獲取的 JWT 呼叫 API
+				// 		callApi(token);
+				// 	},
+				// 	error: function (xhr, status, error) {
+				// 		console.error("獲取 JWT 時發生錯誤:", error);
+				// 	}
+				// });
+			
+		//});
+
+		// function callApi(token) {
+		// 	$.ajax({
+		// 		url: 'https://localhost:7248/api/Connection/GetConObj', // 你的 API Controller 和 Action 名稱
+		// 		type: 'GET',
+		// 		headers: {
+		// 			'Authorization': 'Bearer ' + token // 將 JWT 作為 Bearer Token 發送
+		// 		},
+		// 		success: function (data) {
+		// 			console.log(data)
+		// 			// $('#apiResult').text(JSON.stringify(data)); // 顯示 API 返回的數據
+		// 		},
+		// 		error: function (xhr, status, error) {
+		// 			console.error("呼叫 API 時發生錯誤:", error);
+		// 		}
+		// 	});
+		// }
+
+
+
+
+
+	</script>
+}
